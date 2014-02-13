@@ -1,0 +1,41 @@
+/*#toplist_block ol {
+	padding:0 0 0 22px;
+}
+
+#toplist_block li {
+	padding:2px 11px 2px 2px;
+}
+#toplist_block h4 {
+	padding:6px 11px;
+	font-size:12px;
+	color:#fff;
+	text-shadow:0 1px 0 #000;
+	text-transform:uppercase;
+	background:rgba(0,80,255,0.8);
+	text-align:left;
+	font-weight: bold;
+	border-radius: 10px;
+}*/
+
+.block_toplist {
+	/* 	margin-bottom:20px */
+	/* box-shadow: h-shadow v-shadow blur spread color inset; */
+	-moz-box-shadow: 1px 1px 3px #000000;
+	-webkit-box-shadow: 1px 1px 3px #000000;
+	box-shadow: 1px 1px 3px #000000;
+	/* For IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=2, Direction=135, Color='#000000')";
+	/* For IE 5.5 - 7 */
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=2, Direction=135, Color='#000000');
+	border-radius: 5px;
+	/* 	padding-bottom: 10px; */
+	margin-bottom: 20px;
+}
+
+.block_content_toplist {
+	background-color: #7ba5ff;
+}
+.block_content_toplist a {
+	height: 300px;
+	display: block;
+}
