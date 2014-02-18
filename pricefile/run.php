@@ -17,6 +17,7 @@
 				{
 					$comboName[$combo['id_product_attribute']]['name'][] = $combo['attribute_name'];
 					$comboName[$combo['id_product_attribute']]['reference'] = $combo['reference'];
+					$comboName[$combo['id_product_attribute']]['quantity'] = $combo['quantity'];
 					if ($comboImages)
 						if (array_key_exists($combo['id_product_attribute'],$comboImages))
 							$comboName[$combo['id_product_attribute']]['images'] = $comboImages[$combo['id_product_attribute']];
@@ -44,7 +45,7 @@
 					$attName = implode(' - ',$att['name']);
 					$csvProductString = '"'.$p->name.' - '.$attName.'";"'.($att['reference'] ?: $p->reference).'";"'.$p->getPrice(false,$id,6).'";"'.$p->getPrice(true,$id,6).
 					'";"'.$p->description.'";"'.$p->description_short.
-					'";"'.$p->quantity.'";"'.$productImages.'";';
+					'";"'.$att['quantity'].'";"'.rtrim($productImages,',').'";';
 					$csvString .= $csvProductString."\n";
 				}
 			}
@@ -61,13 +62,17 @@
 				}
 				$csvProductString = '"'.$p->name.'";"'.$p->reference.'";"'.$p->getPrice(false,false,6).'";"'.$p->getPrice(true,false,6).
 				'";"'.$p->description.'";"'.$p->description_short.
-				'";"'.$p->quantity.'";"'.$productImages.'";';
+				'";"'.$p->quantity.'";"'.rtrim($productImages,',').'";';
 				$csvString .= $csvProductString."\n";
 			}
 
 		}
 		echo('CSV Format<br>');
 		$csv = $csvHeader."\n".$csvString;
-		echo($csv);
+		$file = fopen(dirname(__FILE__).'/pricefile.csv','w');
+		fwrite($file,$csv);
+		fclose($file);
+		echo('<a href="pricefile.csv">Pricefile</a>');
+// 		echo($csv);
 // 		echo(nl2br($csv));
 ?>
