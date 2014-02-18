@@ -1,11 +1,73 @@
 <?php
 		include_once(dirname(__FILE__) . '/../../config/config.inc.php');
 		include_once(dirname(__FILE__) . '/../../init.php');
-		echo('running around<br>');
 		$id_lang = 1; // This should be in config later on
 		$products = Product::getProducts($id_lang, 1, 0, 'id_product', 'desc');
-		foreach($products as $product)
+		$csvHeader = '"name";"reference";"price_without_tax";"price_tax";"description";"description_short";"stock";"images";';
+		$csvString = '';
+		foreach ($products as $product)
 		{
-			echo($product['name'].'<br>');
+			$comboName = array();
+			$p = new Product($product['id_product'],true,$id_lang);
+			$combos = $p->getAttributeCombinations($id_lang);
+			if ($combos)
+			{
+				$comboImages = $p->getCombinationImages($id_lang);
+				foreach ($combos as $combo)
+				{
+					$comboName[$combo['id_product_attribute']]['name'][] = $combo['attribute_name'];
+					$comboName[$combo['id_product_attribute']]['reference'] = $combo['reference'];
+					if ($comboImages)
+						if (array_key_exists($combo['id_product_attribute'],$comboImages))
+							$comboName[$combo['id_product_attribute']]['images'] = $comboImages[$combo['id_product_attribute']];
+				}
+				foreach ($comboName as $id => $att)
+				{
+					$productImages = '';
+					$csvProductString = '';
+					if ($comboImages)
+					{
+						foreach ($comboImages as $id_img => $attImg)
+						{
+							if ($id == $id_img)
+							{
+								foreach ($attImg as $img)
+								{
+									$imgLink = 'http://'.($link->getImageLink($p->link_rewrite, $p->id.'-'.$img['id_image'], 'large_default')).',';
+									$imgLink = str_replace('http://http://','http://',$imgLink);
+									$productImages .= $imgLink;
+								}
+								break;
+							}
+						}
+					}
+					$attName = implode(' - ',$att['name']);
+					$csvProductString = '"'.$p->name.' - '.$attName.'";"'.($att['reference'] ?: $p->reference).'";"'.$p->getPrice(false,$id,6).'";"'.$p->getPrice(true,$id,6).
+					'";"'.$p->description.'";"'.$p->description_short.
+					'";"'.$p->quantity.'";"'.$productImages.'";';
+					$csvString .= $csvProductString."\n";
+				}
+			}
+			else
+			{
+				$images = $p->getImages($id_lang);
+				$link = new Link();
+				$productImages = '';
+				foreach ($images as $img)
+				{
+					$imgLink = 'http://'.($link->getImageLink($p->link_rewrite, $p->id.'-'.$img['id_image'], 'large_default')).',';
+					$imgLink = str_replace('http://http://','http://',$imgLink);
+					$productImages .= $imgLink;
+				}
+				$csvProductString = '"'.$p->name.'";"'.$p->reference.'";"'.$p->getPrice(false,false,6).'";"'.$p->getPrice(true,false,6).
+				'";"'.$p->description.'";"'.$p->description_short.
+				'";"'.$p->quantity.'";"'.$productImages.'";';
+				$csvString .= $csvProductString."\n";
+			}
+
 		}
+		echo('CSV Format<br>');
+		$csv = $csvHeader."\n".$csvString;
+		echo($csv);
+// 		echo(nl2br($csv));
 ?>
