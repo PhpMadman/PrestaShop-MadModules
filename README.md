@@ -17,6 +17,11 @@ ToDo
 Changelog
 =====================
 ```
+Version 0.3
+---------------
+[*] Only active products are exported
+[+] Partily added install / config code
+
 Version 0.2
 ----------------
 [-] Made changelog compatible with github syntax
@@ -28,9 +33,7 @@ Version 0.2
 Version 0.1
 ----------------
 [+] Added retrivel of data
-
 [+] Added csv file
-
 [-] Fixed some string bugs
 [+] Added support for combos
 [*] Improved code
