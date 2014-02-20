@@ -13,10 +13,23 @@ ToDo
 - Create a preset called Mod_PriceFile or something.
 - Customer updates desired values to match import.
 - Figuer out how to run Import controll from module.
+- Change pricefile to pricefile_[HASH].csv
+- User SERVER cfg to get [SERVER]/modules/pricefile/pricefile_[SERVER_HASH].csv
+- Only show HASH and run link if export is enabled
 
 Changelog
 =====================
 ```
+Version 0.4
+---------------
+[+] Finished and bugfixed install / config
+[*] Moved config array to $this->config
+[+] Added display of security key and link in config
+[*] Cleaned run file
+[*] Improved code for config
+[~] Removed output for download link, with SERVER settings, it's not need anymore
+[+] Added english translation file
+
 Version 0.3
 ---------------
 [*] Only active products are exported
