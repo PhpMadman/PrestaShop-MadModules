@@ -6,7 +6,7 @@
 	{
 		if (@$_GET['key'] == Configuration::get('PS_MOD_PRICEFILE_HASH'))
 		{
-			$id_lang = 1; // This should be in config later on
+			$id_lang = Configuration::get('PS_MOD_PRICEFILE_LANG');
 			$products = Product::getProducts($id_lang, 1, 0, 'id_product', 'desc',false,true);
 			$csvHeader = '"name";"reference";"price_without_tax";"price_tax";"description";"description_short";"stock";"images";';
 			$csvString = '';
@@ -73,7 +73,7 @@
 
 			}
 			$csv = $csvHeader."\n".$csvString;
-			$file = fopen(dirname(__FILE__).'/pricefile.csv','w');
+			$file = fopen(dirname(__FILE__).'/pricefile_'.Configuration::get('PS_MOD_PRICEFILE_HASH').'.csv','w');
 			fwrite($file,$csv);
 			fclose($file);
 		}

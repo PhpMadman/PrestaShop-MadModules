@@ -8,18 +8,23 @@ Current security key on minor: 652696073734
 
 ToDo
 ======
-- Settings to enable export and import
-- @ install copy a file to import.
+- @ install, copy a file to import.
 - Create a preset called Mod_PriceFile or something.
 - Customer updates desired values to match import.
 - Figuer out how to run Import controll from module.
-- Change pricefile to pricefile_[HASH].csv
 - User SERVER cfg to get [SERVER]/modules/pricefile/pricefile_[SERVER_HASH].csv
-- Only show HASH and run link if export is enabled
+- Due to html bug in import, escape @ export " to \"
 
 Changelog
 =====================
 ```
+Version 0.5
+--------------
+[*] Changed csv filename to contain hash
+[-] Fixed bad code in _postProcess
+[+] Added support for language in config
+[*] Hash and run link is only shown if export is enabled
+
 Version 0.4
 ---------------
 [+] Finished and bugfixed install / config

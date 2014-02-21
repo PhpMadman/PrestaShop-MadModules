@@ -7,7 +7,7 @@ class PriceFile extends Module
 	public function __construct() {
 		$this->name = 'pricefile';
 		$this->tab = 'administration';
-		$this->version = 0.4;
+		$this->version = 0.5;
 		$this->author = 'Madman';
 		$this->bootstrap = true;
 		$this->config = array(
@@ -16,6 +16,7 @@ class PriceFile extends Module
 			'PS_MOD_PRICEFILE_IMPORT' => array(0,'Import'),
 			'PS_MOD_PRICEFILE_SERVER' => array('','Server address'),
 			'PS_MOD_PRICEFILE_SERVER_HASH' => array('','Server security key'),
+			'PS_MOD_PRICEFILE_LANG' => array(Configuration::get('PS_LANG_DEFAULT'),false),
 		);
 
 		parent::__construct();
@@ -41,16 +42,22 @@ class PriceFile extends Module
 
 	private function _postProcess()
 	{
+		$output = '';
 		foreach ($this->config as $key => $value)
-		{
-			if ($opt = Tools::getValue($key)) {
-				if ($opt != 0 && $opt != 1)
-					$output .= $this->displayError($this->l($this->config[$key]).': '.$this->l('Invaild choice'));
-				else
+			if ($value[1])
+			{
+				$opt = Tools::getValue($key);
+				if ($key == 'PS_MOD_PRICEFILE_LANG')
 					Configuration::updateValue($key,$opt);
+				else
+					if ($opt != 0 && $opt != 1)
+						$output .= $this->displayError($this->l($this->config[$key][1]).': '.$this->l('Invaild choice'));
+					else
+						Configuration::updateValue($key,$opt);
 			}
-		}
-		return $this->displayConfirmation($this->l('Settings updated'));
+
+		$output .= $this->displayConfirmation($this->l('Settings updated'));
+		return $output;
 	}
 
 	public function getContent()
@@ -60,14 +67,14 @@ class PriceFile extends Module
 		{
 			$output .= $this->_postProcess();
 		}
-		$output .= $this->l('Price File security key').': '.Configuration::get('PS_MOD_PRICEFILE_HASH').'<br>';
-		$output .= $this->l('Price File run link').': ' .
-			'<a target="_blank" href="'.Tools::getHttpHost(true).__PS_BASE_URI__.'modules/pricefile/run.php?key='.Configuration::get('PS_MOD_PRICEFILE_HASH').'">' .
-			Tools::getHttpHost(true).__PS_BASE_URI__.'modules/pricefile/run.php?key='.Configuration::get('PS_MOD_PRICEFILE_HASH').
-			'</a><br>';
-// 		$output .= $this->l('Price File download link').': ' .
-// 			'<a target="_blank" href="'.Tools::getHttpHost(true).__PS_BASE_URI__.'modules/pricefile/pricefile.csv">' .
-// 			Tools::getHttpHost(true).__PS_BASE_URI__.'modules/pricefile/pricefile.csv</a><br>';
+		if (Configuration::get('PS_MOD_PRICEFILE_EXPORT'))
+		{
+			$output .= $this->l('Price File security key').': '.Configuration::get('PS_MOD_PRICEFILE_HASH').'<br>';
+			$output .= $this->l('Price File run link').': ' .
+				'<a target="_blank" href="'.Tools::getHttpHost(true).__PS_BASE_URI__.'modules/pricefile/run.php?key='.Configuration::get('PS_MOD_PRICEFILE_HASH').'">' .
+				Tools::getHttpHost(true).__PS_BASE_URI__.'modules/pricefile/run.php?key='.Configuration::get('PS_MOD_PRICEFILE_HASH').
+				'</a><br>';
+		}
 		$output .= '<br>';
 		$output .= $this->renderForm();
 
@@ -103,6 +110,17 @@ class PriceFile extends Module
 						)
 					),
 					array(
+						'type' => 'select',
+						'label' => $this->l('Language to export'),
+						'name' => 'PS_MOD_PRICEFILE_LANG',
+						'default_value' => Configuration::get('PS_MOD_PRICEFILE_LANG'),
+						'options' => array(
+							'query' => Language::getLanguages(true),
+							'id' => 'id_lang',
+							'name' => 'name'
+						)
+					),
+					array(
 						'type' => 'switch',
 						'label' => $this->l('Import'),
 						'name' => 'PS_MOD_PRICEFILE_IMPORT',
@@ -125,7 +143,7 @@ class PriceFile extends Module
 						'type' => 'text',
 						'label' => $this->l('Server address'),
 						'name' => 'PS_MOD_PRICEFILE_SERVER',
-						'desc' => $this->l('Enter the address to get pricefile from'),
+						'desc' => $this->l('Enter the address to get pricefile from. (http:// is required)'),
 					),
 					array(
 						'type' => 'text',
