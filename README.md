@@ -8,20 +8,34 @@ Current security key on minor: 652696073734
 
 ToDo
 ======
-- @ install, copy a file to import.
-- Create a preset called Mod_PriceFile or something.
-- Customer updates desired values to match import.
-- Figuer out how to run Import controll from module.
-- User SERVER cfg to get [SERVER]/modules/pricefile/pricefile_[SERVER_HASH].csv
 - Due to html bug in import, escape @ export " to \"
--   Rewrite to skip enclose, PS should work without them.
-- Retink export/import. Clients need to beable to set what products they want.
--   Should de be done on server or client side, and an include list is better, then new products won't be added.
+-	Rewrite to skip enclose, PS should work without them.
+- Retink export/import. Clients need to be able to set what products they want.
+-	Should de be done on server or client side, and an include list is better, then new products won't be added.
 - Export needs to be rewritten. Combinations needs to be exports as such.
+-	Problem with that is, that combiantions is imported on to product id.
+- Using PrestaShop's import is not enough. Need to create my own. This will simplify all export/import problem.
+- Export products with ID's, create a second file with the combinations
+- 	Then at client, read include list (Server ID based). Import them, create array for server id's and client id's
+-	Then import combinations using that list.
+-	Make module save server/id list in table (This will require multiple tabels. One for server/client id's, one for include/exclude/new id's)
+-	Use csv class to read file.
+- Split Settings to Settings,Import settigns and Export settings
+- Add Multie delimter ; and function to split it in to subarray in to csv class
+-	When hasHeader is set, use them as key and remove them from final array
 
 Changelog
 =====================
 ```
+Version 0.6
+-------------
+[~] Combination support was removed untill a way to know product ideas is created
+[*] Changed csv output
+[+] Added a csv class for importer
+[*] csv file now converts nl 2 br
+[+] Added tmp import button
+[+] Printed testdata from csv class
+
 Version 0.5
 --------------
 [*] Changed csv filename to contain hash

@@ -8,7 +8,7 @@
 		{
 			$id_lang = Configuration::get('PS_MOD_PRICEFILE_LANG');
 			$products = Product::getProducts($id_lang, 1, 0, 'id_product', 'desc',false,true);
-			$csvHeader = '"name";"reference";"price_without_tax";"price_tax";"description";"description_short";"stock";"images";';
+			$csvHeader = 'name,reference,price_without_tax,price_tax,description,description_short,stock,images';
 			$csvString = '';
 			foreach ($products as $product)
 			{
@@ -39,7 +39,7 @@
 								{
 									foreach ($attImg as $img)
 									{
-										$imgLink = 'http://'.($link->getImageLink($p->link_rewrite, $p->id.'-'.$img['id_image'], 'large_default')).',';
+										$imgLink = 'http://'.($link->getImageLink($p->link_rewrite, $p->id.'-'.$img['id_image'], 'large_default')).';';
 										$imgLink = str_replace('http://http://','http://',$imgLink);
 										$productImages .= $imgLink;
 									}
@@ -48,10 +48,12 @@
 							}
 						}
 						$attName = implode(' - ',$att['name']);
-						$csvProductString = '"'.$p->name.' - '.$attName.'";"'.($att['reference'] ?: $p->reference).'";"'.$p->getPrice(false,$id,6).'";"'.$p->getPrice(true,$id,6).
-						'";"'.$p->description.'";"'.$p->description_short.
-						'";"'.$att['quantity'].'";"'.rtrim($productImages,',').'";';
+						/*
+						$csvProductString = '"'.$p->name.' - '.$attName.','.($att['reference'] ?: $p->reference).','.$p->getPrice(false,$id,6).','.$p->getPrice(true,$id,6).
+						','.$p->description.','.$p->description_short.
+						','.$att['quantity'].','.rtrim($productImages,';').'";';
 						$csvString .= $csvProductString."\n";
+						*/
 					}
 				}
 				else
@@ -61,20 +63,20 @@
 					$productImages = '';
 					foreach ($images as $img)
 					{
-						$imgLink = 'http://'.($link->getImageLink($p->link_rewrite, $p->id.'-'.$img['id_image'], 'large_default')).',';
+						$imgLink = 'http://'.($link->getImageLink($p->link_rewrite, $p->id.'-'.$img['id_image'], 'large_default')).';';
 						$imgLink = str_replace('http://http://','http://',$imgLink);
 						$productImages .= $imgLink;
 					}
-					$csvProductString = '"'.$p->name.'";"'.$p->reference.'";"'.$p->getPrice(false,false,6).'";"'.$p->getPrice(true,false,6).
-					'";"'.$p->description.'";"'.$p->description_short.
-					'";"'.$p->quantity.'";"'.rtrim($productImages,',').'";';
+					$csvProductString = $p->name.','.$p->reference.','.$p->getPrice(false,false,6).','.$p->getPrice(true,false,6).
+					','.Tools::nl2br($p->description).','.$p->description_short.
+					','.$p->quantity.','.rtrim($productImages,';');
 					$csvString .= $csvProductString."\n";
 				}
 
 			}
 			$csv = $csvHeader."\n".$csvString;
 			$file = fopen(dirname(__FILE__).'/pricefile_'.Configuration::get('PS_MOD_PRICEFILE_HASH').'.csv','w');
-			fwrite($file,$csv);
+			fwrite($file,rtrim($csv));
 			fclose($file);
 		}
 		else
