@@ -14,6 +14,10 @@ ToDo
 - Figuer out how to run Import controll from module.
 - User SERVER cfg to get [SERVER]/modules/pricefile/pricefile_[SERVER_HASH].csv
 - Due to html bug in import, escape @ export " to \"
+-   Rewrite to skip enclose, PS should work without them.
+- Retink export/import. Clients need to beable to set what products they want.
+-   Should de be done on server or client side, and an include list is better, then new products won't be added.
+- Export needs to be rewritten. Combinations needs to be exports as such.
 
 Changelog
 =====================
