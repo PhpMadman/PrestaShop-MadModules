@@ -23,6 +23,8 @@ ToDo
 - Split Settings to Settings,Import settigns and Export settings
 - Add Multie delimter ; and function to split it in to subarray in to csv class
 -	When hasHeader is set, use them as key and remove them from final array
+-	Import need to check that if a server id is in include list but, not in actual list, it should report it.
+-	And by default disable that product?
 
 Changelog
 =====================
