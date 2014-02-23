@@ -27,6 +27,10 @@ ToDo
 Changelog
 =====================
 ```
+Version 0.6.1
+------------
+[*] Added enclose to csv class
+
 Version 0.6
 -------------
 [~] Combination support was removed untill a way to know product ideas is created

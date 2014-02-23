@@ -19,16 +19,17 @@ class CSV {
 	 * @param char $delimiter_row line break by default \n
 	 * @param bool $hasHeader true if the first line of the csv is the columns names
 	 */
-	public function __construct($delimiter=',', $delimiter_row="\n", $hasHeader=true)
+	public function __construct($delimiter=',', $enclose='"', $delimiter_row="\n", $hasHeader=true)
 	{
-		$this->CSV($delimiter, $delimiter_row, $hasHeader);
+		$this->CSV($delimiter, $enclose, $delimiter_row, $hasHeader);
 	}
-	public function CSV($delimiter=',', $delimiter_row="\n", $hasHeader=true)
+	public function CSV($delimiter=',', $enclose='"', $delimiter_row="\n", $hasHeader=true)
 	{
 		$this->delimiter = $delimiter;
 		$this->delimiter_row = $delimiter_row;
 		$this->hasHeader = $hasHeader;
 		$this->csv = null;
+		$this->enclose = $enclose;
 	}
 	
 	// <editor-fold defaultstate="collapsed" desc="Setter">
@@ -231,13 +232,59 @@ class CSV {
 	{
 		//$data = str_getcsv($string, "\n");
 		$data = explode($this->delimiter_row, $string);
+// 		if ($this->hasHeader)
 
 		foreach($data as $line)
 		{
-			// Using explode WILL casue problem WHEN text contains delimter.
-			// We need to write a char by char parser, and add support for enclose
-			// and then re-add enclose to run.php
-			$this->csv[] = explode($this->delimiter, $line);
+			// Left to do is to make it work with multi delimiter
+// 			$line = '"my <a href="string">string<a>";"my <span style="color:black;">second</span> string";one.jpg,two.jpg;"three.jpg,four.jpg"';
+			$lineArray = str_split($line);
+			$csvArray = array();
+			$string = '';
+			//"my "string";"my second string"
+			$startpos = 0;
+			foreach($lineArray as $pos=>$char) {
+				if ($char == $this->enclose) // is char is enclose char
+					if (!$is_enclosed) // if not set, it's the beginging of string
+						$is_enclosed = true;
+					else // if it's set, it might be end of string
+						if($lineArray[$pos+1] == $this->delimiter) // if char after current is delimter
+							$is_enclosed = false; // it is end of string
+
+				if ($char == $this->delimiter) // char is delimiter
+					if ($is_enclosed) // string is enclosed, and should not be cut
+						$string .= $char;
+					else
+					{
+					// string is not enclosed, cut, and reset string
+						$csvArray[] = $string;
+						$string = '';
+						$startpos = $pos+1;
+					}
+				elseif ($char == ',')
+				{
+					if ($is_enclosed) // string is enclosed, and should not be cut
+						$string .= $char;
+					else
+					{
+						/*
+							best way would be to get the pos of string start char
+							and this else should set a bool and save a pos.
+							wait until delimiter is next char.
+							And then use that to cut up the string.
+						*/
+						$string .= $char;
+// 						$csvArray[] = $string;
+// 						$string = '';
+					}
+				}
+				else
+					$string .= $char;
+			}
+			if (strlen($string) > 0)
+				$csvArray[] = $string; // whatever is left after last delimiter is added to last element
+
+			$this->csv[] = $csvArray;
 		}
 	}
 	

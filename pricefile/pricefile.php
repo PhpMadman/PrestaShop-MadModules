@@ -7,7 +7,7 @@ class PriceFile extends Module
 	public function __construct() {
 		$this->name = 'pricefile';
 		$this->tab = 'administration';
-		$this->version = 0.5;
+		$this->version = '0.6.1';
 		$this->author = 'Madman';
 		$this->bootstrap = true;
 		$this->config = array(
@@ -70,9 +70,9 @@ class PriceFile extends Module
 		elseif (Tools::isSubmit('submitImport'))
 		{
 			require_once(dirname(__FILE__).'/class/csv.php');
-			$csv = new CSV();
+			$csv = new CSV(';');
 			$csv->SetCsvFromFile(dirname(__FILE__).'/pricefile_652696073734.csv');
-			print_r($csv->GetArray());
+			$output .= '<pre>'.print_r($csv->GetArray()).'</pre>';
 		}
 
 		if (Configuration::get('PS_MOD_PRICEFILE_EXPORT'))
