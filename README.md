@@ -8,27 +8,28 @@ Current security key on minor: 652696073734
 
 ToDo
 ======
-- Due to html bug in import, escape @ export " to \"
--	Rewrite to skip enclose, PS should work without them.
-- Retink export/import. Clients need to be able to set what products they want.
--	Should de be done on server or client side, and an include list is better, then new products won't be added.
-- Export needs to be rewritten. Combinations needs to be exports as such.
--	Problem with that is, that combiantions is imported on to product id.
-- Using PrestaShop's import is not enough. Need to create my own. This will simplify all export/import problem.
-- Export products with ID's, create a second file with the combinations
-- 	Then at client, read include list (Server ID based). Import them, create array for server id's and client id's
--	Then import combinations using that list.
--	Make module save server/id list in table (This will require multiple tabels. One for server/client id's, one for include/exclude/new id's)
--	Use csv class to read file.
-- Split Settings to Settings,Import settigns and Export settings
-- Add Multie delimter ; and function to split it in to subarray in to csv class
--	When hasHeader is set, use them as key and remove them from final array
--	Import need to check that if a server id is in include list but, not in actual list, it should report it.
--	And by default disable that product?
+- Include, New, Exclude list in import config
+	- Do this for export to, there might be some products we don't want to export
+- Re-Add combinations to pricefile
+- Install mysql tabels
+	- ps_pricefile_list : id,server_id,product_name,include,new,exclude
+	- ps_pricefile_ids : id,server_id,client_id
+	- ps_pricefile_indata :  id,name,value
+		- This must be populated with the fields of csv
+- Client also need to set if a certain field should be imported at a diffrent field (i.e price_without_tax as gross_price), needs 2 option. Clone to, Import as
 
 Changelog
 =====================
 ```
+Version 0.7
+------------
+[*] Updated description
+[*] Finished update of Class csv
+[+] Added cookie button
+[+] Added ID to exported fields
+[/] Partailly added mysql tabels to install (Not working!)
+[*] Splitted Settings to seperate fields
+
 Version 0.6.1
 ------------
 [*] Added enclose to csv class
@@ -62,7 +63,7 @@ Version 0.4
 Version 0.3
 ---------------
 [*] Only active products are exported
-[+] Partily added install / config code
+[/] Partily added install / config code
 
 Version 0.2
 ----------------

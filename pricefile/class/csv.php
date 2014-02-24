@@ -2,16 +2,19 @@
 /*
  * @author Damien Legrand
  * www.damienlegrand.com
+ * Extended by Madman
  */
 
 class CSV {
 	
-	var $delimiter;
-	var $delimiter_row;
+	public $delimiter;
+	public $delimiter_row;
+	public $enclose;
+	public $multilimiter;
 	
-	var $hasHeader;
+	public $hasHeader;
 	
-	var $csv;
+	public $csv;
 	
 	/**
 	 * Class Constructor
@@ -19,21 +22,21 @@ class CSV {
 	 * @param char $delimiter_row line break by default \n
 	 * @param bool $hasHeader true if the first line of the csv is the columns names
 	 */
-	public function __construct($delimiter=',', $enclose='"', $delimiter_row="\n", $hasHeader=true)
+	public function __construct($delimiter=',', $enclose='"', $multilimiter = ';', $delimiter_row="\n", $hasHeader=true)
 	{
-		$this->CSV($delimiter, $enclose, $delimiter_row, $hasHeader);
+		$this->CSV($delimiter, $enclose, $multilimiter, $delimiter_row, $hasHeader);
 	}
-	public function CSV($delimiter=',', $enclose='"', $delimiter_row="\n", $hasHeader=true)
+
+	public function CSV($delimiter=',', $enclose='"', $multilimiter = ';', $delimiter_row="\n", $hasHeader=true)
 	{
 		$this->delimiter = $delimiter;
 		$this->delimiter_row = $delimiter_row;
 		$this->hasHeader = $hasHeader;
 		$this->csv = null;
 		$this->enclose = $enclose;
+		$this->multilimiter = $multilimiter;
 	}
-	
-	// <editor-fold defaultstate="collapsed" desc="Setter">
-	
+
 	/**
 	 * Set the delimiter of the CSV, coma by default
 	 * @param type $delimiter the delimiter
@@ -43,7 +46,7 @@ class CSV {
 		if(isset($delimiter))
 			$this->delimiter = $delimiter;
 	}
-	
+
 	/**
 	 * Set the row delimiter generaly a line break "\n"
 	 * @param string $delimiter_row 
@@ -53,7 +56,7 @@ class CSV {
 		if(isset($delimiter_row))
 			$this->delimiter = $delimiter_row;
 	}
-	
+
 	/**
 	 * Tel the class if the first line of the CSV is the list of columns names
 	 * @param boolean $bool 
@@ -63,7 +66,7 @@ class CSV {
 		if(is_bool($bool))
 			$this->hasHeader = $bool;
 	}
-	
+
 	/**
 	 * Set the csv with a string
 	 * @param type $string csv as string
@@ -76,7 +79,7 @@ class CSV {
 			$this->_prep_array($string);
 		}
 	}
-	
+
 	/**
 	 * Set the csv with a csv file
 	 * @param string $path csv file name
@@ -89,7 +92,7 @@ class CSV {
 			$this->_prep_array(file_get_contents($path));
 		}
 	}
-	
+
 	/**
 	 * Add more data to the current csv from a csv file
 	 * @param string $string csv as string
@@ -106,7 +109,7 @@ class CSV {
 			}
 		}
 	}
-	
+
 	/**
 	 *Add more data to the current csv from a csv file
 	 * @param string $path the name file
@@ -123,11 +126,7 @@ class CSV {
 			}
 		}
 	}
-	
-	// </editor-fold>
-	
-	// <editor-fold defaultstate="collapsed" desc="Getter">
-	
+
 	/**
 	 * Get the csv as an array
 	 * @return array 
@@ -136,7 +135,7 @@ class CSV {
 	{
 		return $this->csv;
 	}
-	
+
 	/**
 	 * Get an html table with values from csv
 	 * @param string $attrs attribus in table balise ( id class ... )
@@ -193,7 +192,7 @@ class CSV {
 		
 		return $table;
 	}
-	
+
 	/**
 	 * Return the number of row without the header
 	 * @return int
@@ -209,7 +208,7 @@ class CSV {
 		}
 		
 	}
-	
+
 	/**
 	 * Return the number of column
 	 * @return int 
@@ -223,26 +222,20 @@ class CSV {
 			return count($this->csv[0]);
 		}
 	}
-	
-	// </editor-fold>
-	
-	// <editor-fold defaultstate="collapsed" desc="Private">
-	
+
 	private function _prep_array($string)
 	{
-		//$data = str_getcsv($string, "\n");
 		$data = explode($this->delimiter_row, $string);
-// 		if ($this->hasHeader)
 
-		foreach($data as $line)
+		foreach($data as $index => $line)
 		{
-			// Left to do is to make it work with multi delimiter
-// 			$line = '"my <a href="string">string<a>";"my <span style="color:black;">second</span> string";one.jpg,two.jpg;"three.jpg,four.jpg"';
 			$lineArray = str_split($line);
 			$csvArray = array();
 			$string = '';
-			//"my "string";"my second string"
-			$startpos = 0;
+			$i = 0;
+			$multi = array();
+			$is_multi = false;
+			$is_enclosed = false;
 			foreach($lineArray as $pos=>$char) {
 				if ($char == $this->enclose) // is char is enclose char
 					if (!$is_enclosed) // if not set, it's the beginging of string
@@ -256,37 +249,66 @@ class CSV {
 						$string .= $char;
 					else
 					{
-					// string is not enclosed, cut, and reset string
-						$csvArray[] = $string;
-						$string = '';
-						$startpos = $pos+1;
+						if ($is_multi) {
+							$multi[] = $string;
+
+							if ($this->hasHeader && $index != 0)
+								$csvArray[trim($this->csv[0][$i],'"')] = $multi;
+							else
+								$csvArray[$i] =$multi;
+
+							$i++;
+							$string = '';
+						}
+						else
+						{
+							// string is not enclosed, cut, and reset string
+							if ($this->hasHeader && $index != 0)
+								$csvArray[trim($this->csv[0][$i],'"')] = $string;
+							else
+								$csvArray[$i] = $string;
+
+							$i++;
+							$string = '';
+						}
 					}
-				elseif ($char == ',')
+				elseif ($char == $this->multilimiter)
 				{
 					if ($is_enclosed) // string is enclosed, and should not be cut
 						$string .= $char;
 					else
 					{
-						/*
-							best way would be to get the pos of string start char
-							and this else should set a bool and save a pos.
-							wait until delimiter is next char.
-							And then use that to cut up the string.
-						*/
-						$string .= $char;
-// 						$csvArray[] = $string;
-// 						$string = '';
+						$is_multi = true;
+						$multi[] = $string;
+						$string = '';
 					}
 				}
 				else
 					$string .= $char;
 			}
 			if (strlen($string) > 0)
-				$csvArray[] = $string; // whatever is left after last delimiter is added to last element
+				if ($is_multi)
+				{
+					$multi[] = $string;
+					if ($this->hasHeader && $index != 0)
+						$csvArray[trim($this->csv[0][$i],'"')] = $multi;
+					else
+						$csvArray[$i] = $multi;
+				}
+				else
+					// whatever is left after last delimiter is added to last element
+					if ($this->hasHeader && $index != 0)
+						$csvArray[trim($this->csv[0][$i],'"')] = $string;
+					else
+						$csvArray[$i] = $string;
 
 			$this->csv[] = $csvArray;
 		}
+		if ($this->hasHeader)
+		{
+			// remove header from array
+			unset($this->csv[0]);
+			array_values($this->csv);
+		}
 	}
-	
-	// </editor-fold>
 }

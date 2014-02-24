@@ -8,7 +8,7 @@
 		{
 			$id_lang = Configuration::get('PS_MOD_PRICEFILE_LANG');
 			$products = Product::getProducts($id_lang, 1, 0, 'id_product', 'desc',false,true);
-			$csvHeader = '"name";"reference";price_without_tax;price_tax;"description";"description_short";stock;images';
+			$csvHeader = 'id;"name";"reference";price_without_tax;price_tax;"description";"description_short";stock;images';
 			$csvString = '';
 			foreach ($products as $product)
 			{
@@ -67,7 +67,7 @@
 						$imgLink = str_replace('http://http://','http://',$imgLink);
 						$productImages .= $imgLink;
 					}
-					$csvProductString = '"'.$p->name.'";"'.$p->reference.'";'.$p->getPrice(false,false,6).';'.$p->getPrice(true,false,6).
+					$csvProductString = $p->id.';"'.$p->name.'";"'.$p->reference.'";'.$p->getPrice(false,false,6).';'.$p->getPrice(true,false,6).
 					';"'.Tools::nl2br($p->description).'";"'.Tools::nl2br($p->description_short).
 					'";'.$p->quantity.';'.rtrim($productImages,',');
 					$csvString .= $csvProductString."\n";
