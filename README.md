@@ -11,23 +11,30 @@ ToDo
 - Include, New, Exclude list in import config
 	- Do this for export to, there might be some products we don't want to export
 - Re-Add combinations to pricefile
-- Install mysql tabels
-	- ps_pricefile_list : id,server_id,product_name,include,new,exclude
-	- ps_pricefile_ids : id,server_id,client_id
-	- ps_pricefile_indata :  id,name,value
-		- This must be populated with the fields of csv
 - Client also need to set if a certain field should be imported at a diffrent field (i.e price_without_tax as gross_price), needs 2 option. Clone to, Import as
 
 Changelog
 =====================
 ```
+Version 0.8
+------------
+[-] Fixed install code (Thanks to El Patron's code)
+[*] Renamed some functions
+[*] class folder renamed to classes
+[*] Norm on csv class
+[*] Renamed DB tabels
+[+] Added export mysql
+[/] Partially added export settings
+[/] Partially added form override
+[*] Fixed some spelling / code
+
 Version 0.7
 ------------
 [*] Updated description
 [*] Finished update of Class csv
 [+] Added cookie button
 [+] Added ID to exported fields
-[/] Partailly added mysql tabels to install (Not working!)
+[/] Partially added mysql tabels to install (Not working!)
 [*] Splitted Settings to seperate fields
 
 Version 0.6.1

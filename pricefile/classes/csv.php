@@ -6,16 +6,16 @@
  */
 
 class CSV {
-	
+
 	public $delimiter;
 	public $delimiter_row;
 	public $enclose;
 	public $multilimiter;
-	
+
 	public $hasHeader;
-	
+
 	public $csv;
-	
+
 	/**
 	 * Class Constructor
 	 * @param char $delimiter comma by default
@@ -49,7 +49,7 @@ class CSV {
 
 	/**
 	 * Set the row delimiter generaly a line break "\n"
-	 * @param string $delimiter_row 
+	 * @param string $delimiter_row
 	 */
 	public function SetRowDelimiter($delimiter_row)
 	{
@@ -59,7 +59,7 @@ class CSV {
 
 	/**
 	 * Tel the class if the first line of the CSV is the list of columns names
-	 * @param boolean $bool 
+	 * @param boolean $bool
 	 */
 	public function CsvHasHeader($bool)
 	{
@@ -129,7 +129,7 @@ class CSV {
 
 	/**
 	 * Get the csv as an array
-	 * @return array 
+	 * @return array
 	 */
 	public function GetArray()
 	{
@@ -161,7 +161,7 @@ class CSV {
 
 			//Make content
 			$table .= "<tbody>";
-			
+
 			$first = true;
 			foreach ($this->csv as $row)
 			{
@@ -172,24 +172,24 @@ class CSV {
 					if($this->hasHeader)
 						$ok = false;
 				}
-				
+
 				if($ok)
 				{
 					$table .= "<tr>";
-					
+
 					foreach($row as $col)
 					{
 						$table .= "<td>$col</td>";
 					}
-					
+
 					$table .= "</tr>";
 				}
 			}
-			
+
 			$table .= "</tbody>";
 			$table .= "</table>";
 		}
-		
+
 		return $table;
 	}
 
@@ -206,12 +206,11 @@ class CSV {
 			$nb = count($this->csv);
 			return ($this->hasHeader)? $nb-1 : $nb;
 		}
-		
 	}
 
 	/**
 	 * Return the number of column
-	 * @return int 
+	 * @return int
 	 */
 	public function GetColumnNumber()
 	{

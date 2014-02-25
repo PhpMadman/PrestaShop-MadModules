@@ -7,7 +7,7 @@ class PriceFile extends Module
 	public function __construct() {
 		$this->name = 'pricefile';
 		$this->tab = 'administration';
-		$this->version = '0.7';
+		$this->version = '0.8';
 		$this->author = 'Madman';
 		$this->bootstrap = true;
 		$this->config = array(
@@ -27,9 +27,10 @@ class PriceFile extends Module
 
 	public function install()
 	{
-		if (parent::install() == false
-			&& $this->_createTabels() // Does not return error, does not create tabels
-			&& $this->_checkConfig()
+		if (!parent::install()
+			|| $this->_installDB()
+			|| $this->_populateDB()
+			|| $this->_checkConfig()
 			)
 			return false;
 
@@ -47,9 +48,20 @@ class PriceFile extends Module
 		}
 	}
 
-	private function _createTabels()
+	private function _installDB()
 	{
-		$sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'pricefile_list` (
+		$sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'pricefile_import` (
+		`id` int(10) NOT NULL AUTO_INCREMENT,
+		`id_server` int(10) NOT NULL,
+		`name` varchar(128) NOT NULL,
+		`include` int(1) NOT NULL DEFAULT \'0\',
+		`new` int(1) NOT NULL DEFAULT \'1\',
+		`exclude` int(1) NOT NULL DEFAULT \'0\',
+		PRIMARY KEY (`id`)
+		) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
+		$result &= Db::getInstance()->execute($sql);
+
+		$sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'pricefile_export` (
 		`id` int(10) NOT NULL AUTO_INCREMENT,
 		`id_server` int(10) NOT NULL,
 		`name` varchar(128) NOT NULL,
@@ -76,6 +88,11 @@ class PriceFile extends Module
 		) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=utf8;';
 		$result &= Db::getInstance()->execute($sql);
 
+		return $result;
+	}
+
+	private function _populateDB()
+	{
 		$indata = array(
 			'name'=> 1,
 			'reference'=> 1,
@@ -88,7 +105,7 @@ class PriceFile extends Module
 		);
 
 		foreach ($indata as $name => $value)
-			$result &= Db::getInstance()->insert(_DB_PREFIX_.'pricefile_indata',array(
+			$result &= Db::getInstance()->insert('pricefile_indata',array(
 					'name' => $name,
 					'value' => $value));
 
@@ -118,20 +135,17 @@ class PriceFile extends Module
 	public function getContent()
 	{
 		$output = '';
+
 		if (Tools::isSubmit('submitUpdateConfig'))
-		{
 			$output .= $this->_updateConfig();
-		}
 		elseif (Tools::isSubmit('submitUpdateImport'))
 			$output .= $this->_updateConfig();
-		{
 			/* Was test data...
-			require_once(dirname(__FILE__).'/class/csv.php');
+			require_once(dirname(__FILE__).'/classes/csv.php');
 			$csv = new CSV(';');
 			$csv->SetCsvFromFile(dirname(__FILE__).'/pricefile_652696073734.csv');
 			$csvArray = $csv->GetArray();
 			*/
-		}
 
 		$output .= '
 		<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4K7W88XESNRSW"  target="_blank" style="font-weight:bold;text-decoration:none;color:#000000">
@@ -150,9 +164,9 @@ class PriceFile extends Module
 		$output .= '<br>';
 		$output .= $this->renderSettingsForm();
 		if (Configuration::get('PS_MOD_PRICEFILE_IMPORT'))
-		{
 			$output .= $this->renderImportForm();
-		}
+		if (Configuration::get('PS_MOD_PRICEFILE_EXPORT'))
+			$output .= $this->renderExportForm();
 
 		return $output;
 	}
@@ -247,6 +261,50 @@ class PriceFile extends Module
 		return $helper->generateForm(array($fields_form));
 	}
 	
+	public function renderExportForm()
+	{
+		$fields_form = array(
+			'form' => array(
+				'legend' => array(
+					'title' => $this->l('Export settings'),
+					'icon' => 'icon-cogs',
+				),
+				'input' => array(
+					array(
+						'type' => 'three_list',
+						'label' => $this->l('Products to export'),
+						'name' => 'export_list',
+					)
+				),
+				'submit' => array(
+					'title' => $this->l('Save'),
+				),
+			)
+		);
+
+		$helper = new HelperForm();
+		$helper->show_toolbar = false;
+		$helper->table = $this->table;
+		$lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+		$helper->default_form_language = $lang->id;
+		$helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
+		$this->fields_form = array();
+		$helper->identifier = $this->identifier;
+		$helper->submit_action = 'submitUpdateImport';
+		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+			.'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+		$helper->token = Tools::getAdminTokenLite('AdminModules');
+		$helper->tpl_vars = array(
+			'fields_value' => $this->getConfigFieldsValues(),
+			'languages' => $this->context->controller->getLanguages(),
+			'id_language' => $this->context->language->id
+		);
+		$helper->base_folder = 'helpers/form/';
+		$helper->module = $this;
+
+		return $helper->generateForm(array($fields_form));
+	}
+
 	public function renderImportForm()
 	{
 		$fields_form = array(
