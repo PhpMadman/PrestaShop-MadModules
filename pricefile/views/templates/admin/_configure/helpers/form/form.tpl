@@ -25,10 +25,16 @@
 
 {extends file="helpers/form/form.tpl"}
 
+<!-- http://amoghnatu.files.wordpress.com/2012/10/3.jpg -->
+<!-- http://viralpatel.net/blogs/listbox-select-all-move-left-right-up-down-javascript/ -->
+<!-- http://www.aspsnippets.com/Articles/How-to-move-ListBox-items-to-another-ListBox-in-ASPNet-using-jQuery.aspx -->
+<!-- http://www.johnwbartlett.com/cf_tipsntricks/index.cfm?TopicID=86 -->
+
 <script type="text/javascript">
 	function MoveProduct(from,to)
 	{
-		// Here we should move products between list
+		var id = from.options[from.selectedIndex].value;
+		var to = document.getElementById(to);
 	}
 </script>
 
@@ -42,7 +48,9 @@
 						<option value="{$option.id}">{$option.id_server} - {$option.name}</option>
 					{/foreach}
 				</select>
-				<button type="submit" onclick="MoveProduct([$list.id},'include');return false">Include product<button>
+				{if isset($list.move_left) && $list.move_left}
+					<button type="submit" onclick="MoveProduct([$list.id},'include');return false">Include product<button>
+				{/if}
 			</div>
 		{/foreach}
 	{else}
