@@ -7,7 +7,7 @@ class PriceFile extends Module
 	public function __construct() {
 		$this->name = 'pricefile';
 		$this->tab = 'administration';
-		$this->version = '0.8';
+		$this->version = '0.9';
 		$this->author = 'Madman';
 		$this->bootstrap = true;
 		$this->config = array(
@@ -263,6 +263,43 @@ class PriceFile extends Module
 	
 	public function renderExportForm()
 	{
+		$productList = Db::getInstance()->executeS('
+		SELECT *
+		FROM `'._DB_PREFIX_.'pricefile_export`
+		');
+		if (empty($productList))
+		{
+			$id_lang = Configuration::get('PS_MOD_PRICEFILE_LANG');
+			$products = Product::getProducts($id_lang, 1, 0, 'id_product', 'asc',false,true);
+			$productArray = array_chunk($products,100);
+			foreach ($productArray as $products)
+			{
+				$values = '';
+				foreach ($products as $product)
+					$values .= '('.$product['id_product'].',\''.$product['name'].'\'),';
+
+				Db::getInstance()->execute('
+					INSERT INTO `'._DB_PREFIX_.'pricefile_export`
+					(`id_server`,`name`)
+					VALUES '.rtrim($values,',').'
+				');
+			}
+		}
+
+		$includeProductList = array();
+		$excludeProductList = array();
+		$unlistedProductList = array();
+
+		foreach ($productList as $product)
+		{
+			if ($product['include'])
+				$includeProductList[] = $product;
+			elseif ($product['exclude'])
+				$excludeProductList[] = $product;
+			elseif ($product['new'])
+				$unlistedProductList[] = $product;
+		}
+
 		$fields_form = array(
 			'form' => array(
 				'legend' => array(
@@ -272,9 +309,26 @@ class PriceFile extends Module
 				'input' => array(
 					array(
 						'type' => 'three_list',
-						'label' => $this->l('Products to export'),
 						'name' => 'export_list',
-					)
+						'lists' => array(
+							array(
+								'id' => 'include',
+								'label' => 'Included products',
+								'selectlist' => $includeProductList,
+							),
+							array(
+								'id' => 'new',
+								'label' => 'New, unlisted products',
+								'selectlist' => $unlistedProductList,
+								'move_left' => true,
+							),
+							array(
+								'id' => 'exclude',
+								'label' => 'Excluded products',
+								'selectlist' => $excludeProductList,
+							),
+						),
+					),
 				),
 				'submit' => array(
 					'title' => $this->l('Save'),
@@ -290,7 +344,7 @@ class PriceFile extends Module
 		$helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
 		$this->fields_form = array();
 		$helper->identifier = $this->identifier;
-		$helper->submit_action = 'submitUpdateImport';
+		$helper->submit_action = 'submitUpdateExport';
 		$helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
 			.'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
 		$helper->token = Tools::getAdminTokenLite('AdminModules');

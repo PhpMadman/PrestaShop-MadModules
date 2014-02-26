@@ -25,9 +25,26 @@
 
 {extends file="helpers/form/form.tpl"}
 
+<script type="text/javascript">
+	function MoveProduct(from,to)
+	{
+		// Here we should move products between list
+	}
+</script>
+
 {block name="field"}
 	{if $input.type == 'three_list'}
-		<textarea>it's working!</textarea>
+		{foreach $input.lists as $list}
+			<div style="width:33%;float:left;">
+				<label for="{$list.id}">{$list.label}</label>
+				<select size="10"  id="{$list.id}">
+					{foreach $list.selectlist as $option}
+						<option value="{$option.id}">{$option.id_server} - {$option.name}</option>
+					{/foreach}
+				</select>
+				<button type="submit" onclick="MoveProduct([$list.id},'include');return false">Include product<button>
+			</div>
+		{/foreach}
 	{else}
 		{$smarty.block.parent}
 	{/if}

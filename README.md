@@ -12,10 +12,17 @@ ToDo
 	- Do this for export to, there might be some products we don't want to export
 - Re-Add combinations to pricefile
 - Client also need to set if a certain field should be imported at a diffrent field (i.e price_without_tax as gross_price), needs 2 option. Clone to, Import as
+	- Exanples is the only vaild option. Use a simeple switch Import price_without_tax as gross_price YES / NO
 
 Changelog
 =====================
 ```
+Version 0.9
+------------
+[+] Added divs/select to export config
+[+] Added code to add products to export tabel
+[-] Fixed incorrect submit_action
+
 Version 0.8
 ------------
 [-] Fixed install code (Thanks to El Patron's code)
