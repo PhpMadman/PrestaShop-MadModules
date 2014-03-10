@@ -25,32 +25,27 @@
 
 {extends file="helpers/form/form.tpl"}
 
-<!-- http://amoghnatu.files.wordpress.com/2012/10/3.jpg -->
-<!-- http://viralpatel.net/blogs/listbox-select-all-move-left-right-up-down-javascript/ -->
-<!-- http://www.aspsnippets.com/Articles/How-to-move-ListBox-items-to-another-ListBox-in-ASPNet-using-jQuery.aspx -->
-<!-- http://www.johnwbartlett.com/cf_tipsntricks/index.cfm?TopicID=86 -->
-
-<script type="text/javascript">
-	function MoveProduct(from,to)
-	{
-		var id = from.options[from.selectedIndex].value;
-		var to = document.getElementById(to);
-	}
-</script>
-
 {block name="field"}
 	{if $input.type == 'three_list'}
 		{foreach $input.lists as $list}
-			<div style="width:33%;float:left;">
+			<div style="width:33%;float:left;text-align:center;">
 				<label for="{$list.id}">{$list.label}</label>
 				<select size="10"  id="{$list.id}">
 					{foreach $list.selectlist as $option}
-						<option value="{$option.id}">{$option.id_server} - {$option.name}</option>
+						<option value="{$option.id}">{foreach $list.option_syntax as $syntax}{$option[$syntax['key']]}{$syntax['seperator']}{/foreach}</option>
 					{/foreach}
 				</select>
-				{if isset($list.move_left) && $list.move_left}
-					<button type="submit" onclick="MoveProduct([$list.id},'include');return false">Include product<button>
-				{/if}
+				{foreach $list.move as $move}
+					<button class="btn btn-default" name="Move" type="button" onclick="MoveProduct('{$list.id}','{$move.to_id}');return false;">
+						{if $move.direction == left}
+							<i class="process-icon-back" style="display:inline;"></i>
+							{$move.text}
+						{else}
+							{$move.text}
+							<i class="process-icon-next" style="display:inline;"></i>
+						{/if}
+					</button>
+				{/foreach}
 			</div>
 		{/foreach}
 	{else}

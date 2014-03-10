@@ -7,7 +7,7 @@ class PriceFile extends Module
 	public function __construct() {
 		$this->name = 'pricefile';
 		$this->tab = 'administration';
-		$this->version = '0.9';
+		$this->version = '0.10';
 		$this->author = 'Madman';
 		$this->bootstrap = true;
 		$this->config = array(
@@ -28,9 +28,10 @@ class PriceFile extends Module
 	public function install()
 	{
 		if (!parent::install()
-			|| $this->_installDB()
-			|| $this->_populateDB()
-			|| $this->_checkConfig()
+			|| !$this->_installDB()
+			|| !$this->_populateDB()
+			|| !$this->_checkConfig()
+			|| !$this->registerHook('actionAdminControllerSetMedia')
 			)
 			return false;
 
@@ -39,17 +40,21 @@ class PriceFile extends Module
 
 	private function _checkConfig()
 	{
+		$result = true;
 		// Check config @ install, add with default value if needed.
 		foreach ($this->config as $key => $value)
-		{
 			if (!Configuration::get($key))
+			{
 				if (!Configuration::updateValue($key,$value[0]))
-					$this->displayError($this->l($this->config[$key][1]).': '.$this->l('Could not create'));
-		}
+					$result &= false;
+			}
+		return $result;
 	}
 
 	private function _installDB()
 	{
+		$result = true;
+
 		$sql = 'CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'pricefile_import` (
 		`id` int(10) NOT NULL AUTO_INCREMENT,
 		`id_server` int(10) NOT NULL,
@@ -93,11 +98,13 @@ class PriceFile extends Module
 
 	private function _populateDB()
 	{
+		$result = true;
+
 		$indata = array(
 			'name'=> 1,
 			'reference'=> 1,
 			'price_without_tax'=> 1,
-			'price_with_tax'=> 0,
+			'price_with_tax'=> 0, // this can be removed
 			'description'=> 1,
 			'description_short'=> 0,
 			'stock'=> 1,
@@ -128,8 +135,18 @@ class PriceFile extends Module
 						Configuration::updateValue($key,$opt);
 			}
 
-		$output .= $this->displayConfirmation($this->l('Settings updated'));
+			$output .= $this->displayConfirmation($this->l('Settings updated'));
 		return $output;
+	}
+
+	public function hookActionAdminControllerSetMedia($params)
+	{
+		// add necessary javascript to back office
+		if($this->context->controller->controller_name == 'AdminModules' && Tools::getValue('configure') == $this->name
+		&& Tools::getValue('tab_module') == 'administration' && Tools::getValue('module_name') == $this->name)
+		{
+			$this->context->controller->addJS($this->_path.'views/templates/_configure/helpers/form/form.js');
+		}
 	}
 
 	public function getContent()
@@ -315,17 +332,72 @@ class PriceFile extends Module
 								'id' => 'include',
 								'label' => 'Included products',
 								'selectlist' => $includeProductList,
+								'option_syntax' => array(
+									array(
+										'key' => 'id_server',
+										'seperator' => ' - ',
+									),
+									array(
+										'key' => 'name',
+										'seperator' => '',
+									),
+								),
+								'move' => array(
+									array(
+										'direction' => 'right',
+										'to_id' => 'exclude',
+										'text' => 'Exclude Product',
+									),
+								),
 							),
 							array(
 								'id' => 'new',
 								'label' => 'New, unlisted products',
 								'selectlist' => $unlistedProductList,
-								'move_left' => true,
+								'option_syntax' => array(
+									array(
+										'key' => 'id_server',
+										'seperator' => ' - ',
+									),
+									array(
+										'key' => 'name',
+										'seperator' => '',
+									),
+								),
+								'move' => array(
+									array(
+										'direction' => 'left',
+										'to_id' => 'include',
+										'text' => 'Include Product',
+									),
+									array(
+										'direction' => 'right',
+										'to_id' => 'exclude',
+										'text' => 'Exclude Product',
+									),
+								),
 							),
 							array(
 								'id' => 'exclude',
 								'label' => 'Excluded products',
 								'selectlist' => $excludeProductList,
+								'option_syntax' => array(
+									array(
+										'key' => 'id_server',
+										'seperator' => ' - ',
+									),
+									array(
+										'key' => 'name',
+										'seperator' => '',
+									),
+								),
+								'move' => array(
+									array(
+										'direction' => 'right',
+										'to_id' => 'exclude',
+										'text' => 'Exclude Product',
+									),
+								),
 							),
 						),
 					),

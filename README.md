@@ -12,11 +12,23 @@ ToDo
 	- Do this for export to, there might be some products we don't want to export
 - Re-Add combinations to pricefile
 - Client also need to set if a certain field should be imported at a diffrent field (i.e price_without_tax as gross_price), needs 2 option. Clone to, Import as
-	- Exanples is the only vaild option. Use a simeple switch Import price_without_tax as gross_price YES / NO
+	- Example is the only vaild option. Use a simple switch Import price_without_tax as gross_price YES / NO
+	- Re-thinked, that is default behevaior.
+- Client need to be able to choose what fields should be imported
+- Save the Include, Exclude list.
 
 Changelog
 =====================
 ```
+Version 0.10
+-----------
+[+] Added option syntax
+[*] Rewrote move html
+[+] Added extended move settings
+[+] Added JavaScript to extended form
+[*] Corrected install
+
+
 Version 0.9
 ------------
 [+] Added divs/select to export config
@@ -77,7 +89,7 @@ Version 0.4
 Version 0.3
 ---------------
 [*] Only active products are exported
-[/] Partily added install / config code
+[/] Partially added install / config code
 
 Version 0.2
 ----------------
