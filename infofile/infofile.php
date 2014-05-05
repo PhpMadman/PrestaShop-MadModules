@@ -32,6 +32,7 @@ class InfoFile extends Module
 			|| !$this->_populateDB()
 			|| !$this->_checkConfig()
 			|| !$this->registerHook('actionAdminControllerSetMedia')
+			|| !$this->registerHook('displayBackOfficeFooter')
 			)
 			return false;
 
@@ -138,14 +139,35 @@ class InfoFile extends Module
 			$output .= $this->displayConfirmation($this->l('Settings updated'));
 		return $output;
 	}
+	
+	public function HookDisplayBackOfficeFooter($params)
+	{
+		$this->context->controller->addJS($this->_path.'views/templates/_configure/helpers/form/form.js','all');
+	}
 
 	public function hookActionAdminControllerSetMedia($params)
 	{
+		echo($this->context->controller->controller_name);
+		echo('][');
+		echo('AdminModules');
+		echo('][');
+		echo(Tools::getValue('configure'));
+		echo('][');
+		echo($this->name);
+		echo('][');
+		echo(Tools::getValue('tab_module'));
+		echo('][');
+		echo($this->tab);
+		echo('][');
+		echo(Tools::getValue('module_name'));
+		echo('][');
+		echo($this->name);
 		// add necessary javascript to back office
 		if($this->context->controller->controller_name == 'AdminModules' && Tools::getValue('configure') == $this->name
 		&& Tools::getValue('tab_module') == $this->tab && Tools::getValue('module_name') == $this->name)
 		{
-			$this->context->controller->addJS($this->_path.'views/templates/_configure/helpers/form/form.js');
+			echo('Weee!');
+			$this->context->controller->addJS($this->_path.'views/templates/_configure/helpers/form/form.js','all');
 		}
 	}
 
@@ -156,6 +178,7 @@ class InfoFile extends Module
 		if (Tools::isSubmit('submitUpdateConfig'))
 			$output .= $this->_updateConfig();
 		elseif (Tools::isSubmit('submitUpdateImport'))
+		{
 // 			$output .= $this->_updateConfig();
 			/* Was test data...
 			require_once(dirname(__FILE__).'/classes/csv.php');
@@ -163,6 +186,7 @@ class InfoFile extends Module
 			$csv->SetCsvFromFile(dirname(__FILE__).'/infofile_652696073734.csv');
 			$csvArray = $csv->GetArray();
 			*/
+		}
 		elseif (Tools::isSubmit('submitUpdateExport'))
 		{
 			
@@ -176,8 +200,8 @@ class InfoFile extends Module
 
 		if (Configuration::get('PS_MOD_INFOFILE_EXPORT'))
 		{
-			$output .= $this->l('Price File security key').': '.Configuration::get('PS_MOD_INFOFILE_HASH').'<br>';
-			$output .= $this->l('Price File run link').': ' .
+			$output .= $this->l('InfoFile security key').': '.Configuration::get('PS_MOD_INFOFILE_HASH').'<br>';
+			$output .= $this->l('InfoFile run link').': ' .
 				'<a target="_blank" href="'.Tools::getHttpHost(true).__PS_BASE_URI__.'modules/infofile/run.php?key='.Configuration::get('PS_MOD_INFOFILE_HASH').'">' .
 				Tools::getHttpHost(true).__PS_BASE_URI__.'modules/infofile/run.php?key='.Configuration::get('PS_MOD_INFOFILE_HASH').
 				'</a><br>';
@@ -402,9 +426,9 @@ class InfoFile extends Module
 								),
 								'move' => array(
 									array(
-										'direction' => 'right',
-										'to_id' => 'exclude',
-										'text' => 'Exclude Product',
+										'direction' => 'left',
+										'to_id' => 'include',
+										'text' => 'Include Product',
 									),
 								),
 							),

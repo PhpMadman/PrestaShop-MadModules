@@ -1,7 +1,7 @@
 PrestaShop-MadModules
 =====================
 
-Price File is a simple module that exports info from your products into a csv file.<br>
+InfoFile is a simple module that exports info from your products into a csv file.<br>
 Currently it's only beeing developed for my site and clients.<br>
 
 Current security key on minor: 652696073734
