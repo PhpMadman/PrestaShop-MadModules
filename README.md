@@ -8,6 +8,8 @@ Current security key on minor: 652696073734
 
 ToDo
 ======
+InfoFile
+
 - Include, New, Exclude list in import config
 	- Do this for export to, there might be some products we don't want to export
 - Re-Add combinations to pricefile
@@ -20,6 +22,14 @@ ToDo
 Changelog
 =====================
 ```
+
+Version 0.1
+-----------
+
+
+-- InfoFile --
+
+
 Version 0.10
 -----------
 [+] Added option syntax
