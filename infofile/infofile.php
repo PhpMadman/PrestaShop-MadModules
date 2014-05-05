@@ -164,6 +164,9 @@ class InfoFile extends Module
 			$csvArray = $csv->GetArray();
 			*/
 		elseif (Tools::isSubmit('submitUpdateExport'))
+		{
+			
+		}
 
 		$output .= '
 		<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4K7W88XESNRSW"  target="_blank" style="font-weight:bold;text-decoration:none;color:#000000">
