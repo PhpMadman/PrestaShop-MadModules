@@ -147,26 +147,26 @@ class InfoFile extends Module
 
 	public function hookActionAdminControllerSetMedia($params)
 	{
-		echo($this->context->controller->controller_name);
-		echo('][');
-		echo('AdminModules');
-		echo('][');
-		echo(Tools::getValue('configure'));
-		echo('][');
-		echo($this->name);
-		echo('][');
-		echo(Tools::getValue('tab_module'));
-		echo('][');
-		echo($this->tab);
-		echo('][');
-		echo(Tools::getValue('module_name'));
-		echo('][');
-		echo($this->name);
+// 		echo($this->context->controller->controller_name);
+// 		echo('][');
+// 		echo('AdminModules');
+// 		echo('][');
+// 		echo(Tools::getValue('configure'));
+// 		echo('][');
+// 		echo($this->name);
+// 		echo('][');
+// 		echo(Tools::getValue('tab_module'));
+// 		echo('][');
+// 		echo($this->tab);
+// 		echo('][');
+// 		echo(Tools::getValue('module_name'));
+// 		echo('][');
+// 		echo($this->name);
 		// add necessary javascript to back office
 		if($this->context->controller->controller_name == 'AdminModules' && Tools::getValue('configure') == $this->name
 		&& Tools::getValue('tab_module') == $this->tab && Tools::getValue('module_name') == $this->name)
 		{
-			echo('Weee!');
+// 			echo('Weee!');
 			$this->context->controller->addJS($this->_path.'views/templates/_configure/helpers/form/form.js','all');
 		}
 	}
@@ -208,10 +208,10 @@ class InfoFile extends Module
 		}
 		$output .= '<br>';
 		$output .= $this->renderSettingsForm();
-		if (Configuration::get('PS_MOD_INFOFILE_IMPORT'))
-			$output .= $this->renderImportForm();
-		if (Configuration::get('PS_MOD_INFOFILE_EXPORT'))
-			$output .= $this->renderExportForm();
+// 		if (Configuration::get('PS_MOD_INFOFILE_IMPORT'))
+// 			$output .= $this->renderImportForm();
+// 		if (Configuration::get('PS_MOD_INFOFILE_EXPORT'))
+// 			$output .= $this->renderExportForm();
 
 		return $output;
 	}
@@ -226,7 +226,8 @@ class InfoFile extends Module
 				),
 				'input' => array(
 					array(
-						'type' => 'switch',
+						'type' => 'radio',
+						'class' => 't',
 						'label' => $this->l('Export'),
 						'name' => 'PS_MOD_INFOFILE_EXPORT',
 						'is_bool' => true,
@@ -259,25 +260,26 @@ class InfoFile extends Module
 							'name' => 'name'
 						)
 					),
-					array(
-						'type' => 'switch',
-						'label' => $this->l('Import'),
-						'name' => 'PS_MOD_INFOFILE_IMPORT',
-						'is_bool' => true,
-						'desc' => $this->l('Activate import function'),
-						'values' => array(
-							array(
-								'id' => 'import_on',
-								'value' => 1,
-								'label' => $this->l('Enabled')
-							),
-							array(
-								'id' => 'import_off',
-								'value' => 0,
-								'label' => $this->l('Disabled')
-							)
-						)
-					),
+// 					array(
+// 						'type' => 'radio',
+// 						'class' => 't',
+// 						'label' => $this->l('Import'),
+// 						'name' => 'PS_MOD_INFOFILE_IMPORT',
+// 						'is_bool' => true,
+// 						'desc' => $this->l('Activate import function'),
+// 						'values' => array(
+// 							array(
+// 								'id' => 'import_on',
+// 								'value' => 1,
+// 								'label' => $this->l('Enabled')
+// 							),
+// 							array(
+// 								'id' => 'import_off',
+// 								'value' => 0,
+// 								'label' => $this->l('Disabled')
+// 							)
+// 						)
+// 					),
 				),
 				'submit' => array(
 					'title' => $this->l('Save'),
