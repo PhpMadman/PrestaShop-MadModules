@@ -1,12 +1,14 @@
 PrestaShop-MadModules
 =====================
-This is where all my modules are.<br>
-Some are officaly released on PrestaShop forum, some are just used on my site.<br>
 
-All modules are free to use and modify.<br>
-Feature request/Issuse can be reported here on GitHub or on forum.<br>
-Feel free to create a pull request if you have some code that can improve any module.<br>
+CartLimiter is a module that limit what set of products can be added to cart.
+Limit is done by category ID's.
 
-To download a module, just select branch and download zip file.<br>
+It's only been developed to work with ajax cart, if you don't use ajax cart, you need to figureout what to modifiy yourself.
 
-Before uploading to PrestaShop remember to remove **PhpMadman-MadModules-** from filename.<br>
+This module requires a manual modification of your theme.
+/theme/YOUR_THEME/js/modules/blockcart/ajax-cart.js
+
+I provied a sample for the default-bootstrap theme
+Search ajax-cart.js for /* Madman Patch */
+All the lines that ends with that, is the lines I added.
