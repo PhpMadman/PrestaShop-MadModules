@@ -1,5 +1,10 @@
 PrestaShop-MadModules
 =====================
+
+This install's override so you can attach pdf of invoice and delivery-slip.<br>
+**IMPORANT** Status need to set paid / deliverd to be able to send invoice / delivery-slip<br>
+
+=====================
 This is where all my modules are.<br>
 Some are officaly released on PrestaShop forum, some are just used on my site.<br>
 
