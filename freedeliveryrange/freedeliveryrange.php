@@ -19,11 +19,11 @@
 	if (!defined('_PS_VERSION_'))
 	exit;
 
-class AttachPdf extends Module
+class FreeDeliveryRange extends Module
 {
 	public function __construct()
 	{
-		$this->name = 'attachpdf';
+		$this->name = 'freedeliveryrange';
 		$this->tab = 'Other';
 		$this->version = '0.1';
 		$this->author = 'Madman';
@@ -32,8 +32,8 @@ class AttachPdf extends Module
 
 		parent::__construct();
 
-		$this->displayName = $this->l('Attach Pdf');
-		$this->description = $this->l('Overrides to attach invoices / delivery-slips as pdf');
+		$this->displayName = $this->l('Free Delivery Range');
+		$this->description = $this->l('Adds free delivery range');
 	}
 
 	public function install()
